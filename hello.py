@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, url_for, request, render_template
+from flask import Flask, url_for, request, render_template, send_from_directory
 from werkzeug.utils import secure_filename
 
 BASE_URL = 'http://127.0.0.1:5000/'
@@ -28,27 +28,29 @@ def profile(profile_name):
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-
     if request.method == 'POST':
         
         # access variables
         name = request.form['name']
         email = request.form['email']
         password = request.form['password']
-        pic = upload_file()
+        pic = '/uploads/' + upload_file()
 
-        return '<h4>Registered</h4><p>' + name + ' (' + email + ') </p> <img src='+ pic +' /> <p>' + password + '</p>'
+        return '<h4>Registered</h4><p>' + name + ' (' + email + ') </p> <img src=' + pic + ' width="200px" /> <p>' + password + '</p>'
 
     else:
         return render_template('register.html')
 
 def upload_file():
-
     if request.method == 'POST':
         f = request.files['pic']
         f.save(UPLOAD_FOLDER + secure_filename(f.filename))
 
-        return UPLOADS_URL + f.filename
+        return f.filename
+
+@app.route('/uploads/<filename>')
+def get_upload_url(filename):
+    return send_from_directory(UPLOAD_FOLDER, filename)
 
 
 # run app
