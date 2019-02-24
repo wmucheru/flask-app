@@ -1,4 +1,4 @@
-import os
+import os, uuid
 
 from flask import Flask, url_for, request, render_template, send_from_directory
 from werkzeug.utils import secure_filename
@@ -44,7 +44,7 @@ def register():
 def upload_file():
     if request.method == 'POST':
         f = request.files['pic']
-        f.save(UPLOAD_FOLDER + secure_filename(f.filename))
+        f.save(UPLOAD_FOLDER + secure_filename(uuid.uuid4().hex))
 
         return f.filename
 
